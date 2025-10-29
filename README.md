@@ -28,12 +28,12 @@ code_c/
 
 Each program comes with:
 - Source code (.c file)
-- Documentation (.md file) containing:
+- Documentation (.md.new file) containing:
   - Program description
   - Features
   - Compilation instructions
   - Usage guide
-  - Core algorithm flowchart
+  - Core algorithm flowchart using Mermaid syntax
 
 ## How to Use
 
@@ -93,11 +93,12 @@ Example:
 
 ## Documentation
 
-Each program includes detailed documentation in its corresponding .md file, featuring:
+Each program includes detailed documentation in its corresponding .md.new file, featuring:
 - Comprehensive description
-- Core algorithm explanation
-- Mermaid flowcharts
-- Usage examples
-- Implementation details
-
+- Core algorithm explanation with Mermaid flowcharts
+  - Focus on key data structures and algorithms
+  - Visual representation of program flow
+  - Subgraphs for core operations
+- Compilation and usage instructions
+- Implementation notes
 
