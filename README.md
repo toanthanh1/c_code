@@ -28,7 +28,7 @@ code_c/
 
 Each program comes with:
 - Source code (.c file)
-- Documentation (.md.new file) containing:
+- Documentation (.md file) containing:
   - Program description
   - Features
   - Compilation instructions
@@ -93,7 +93,7 @@ Example:
 
 ## Documentation
 
-Each program includes detailed documentation in its corresponding .md.new file, featuring:
+Each program includes detailed documentation in its corresponding .md file, featuring:
 - Comprehensive description
 - Core algorithm explanation with Mermaid flowcharts
   - Focus on key data structures and algorithms
