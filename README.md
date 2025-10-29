@@ -100,10 +100,4 @@ Each program includes detailed documentation in its corresponding .md file, feat
 - Usage examples
 - Implementation details
 
-## Contributing
 
-This repository is maintained by Toan Thanh. For any questions or suggestions, please open an issue or submit a pull request.
-
-## License
-
-This project is open source and available under the MIT License.
