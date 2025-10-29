@@ -21,109 +21,84 @@ Usage
 
 Run and follow menu to allocate and free memory. Use provided tracking output to inspect leaks.
 
-## Code flow (Mermaid flowchart)
+## Core Algorithm (Mermaid flowchart)
 
 ```mermaid
 flowchart TD
-  Start([Start]) --> Init[Init allocation tracker]
-  Init --> Menu[Show menu / Read choice]
-  Menu -->|Allocate| Alloc[malloc -> record allocation]
-  Menu -->|Free| Free[free -> remove record]
-  Menu -->|Report| Report[Iterate tracker -> show leaks]
-  Alloc --> Menu
-  Free --> Menu
-  Report --> Menu
-  Menu --> Exit[Exit -> free remaining allocations]
-  Exit --> End([End])
+    Begin([Begin]) --> Init
+
+    subgraph "Core Memory Management"
+        Init["Initialize Memory Tracker:
+        - Block list
+        - Statistics counters"]
+        
+        subgraph "Memory Block Structure"
+            direction LR
+            Block["Memory Block:
+            - Address
+            - Size
+            - Allocation time
+            - Source location"]
+        end
+        
+        subgraph "Core Operations"
+            Alloc["Memory Allocation:
+            1. Request memory
+            2. Track block info
+            3. Update statistics"]
+            
+            Free["Memory Deallocation:
+            1. Validate pointer
+            2. Release memory
+            3. Remove tracking"]
+            
+            Track["Memory Tracking:
+            1. List active blocks
+            2. Calculate total usage
+            3. Detect potential leaks"]
+        end
+    end
+
+    Init --> Block
+    Block --> Alloc
+    
+    Alloc --> Check{"Allocation
+    Successful?"}
+    Check -->|Yes| Record["Record Block:
+    Add to tracking list"]
+    Check -->|No| Error["Handle
+    Out of Memory"]
+    
+    Record --> Track
+    Free --> Track
+    
+    Track --> Leak{"Memory
+    Leak Check"}
+    Leak -->|Found| Report["Report:
+    Unfreed blocks"]
+    Leak -->|None| Clean["Memory
+    Status: Clean"]
+    
+    Report --> End([End])
+    Clean --> End
+    Error --> End
 ```
+
+Algorithm explanation:
+1. Memory Block Tracking:
+   - Track each allocation's metadata
+   - Maintain linked list of active blocks
+   - Record allocation details for debugging
+2. Core Operations:
+   - Allocation: malloc + tracking
+   - Deallocation: free + cleanup
+   - Leak detection: analyze active blocks
+3. Memory Safety:
+   - Validate all pointers
+   - Track allocation sizes
+   - Monitor total memory usage
 
 Notes
 
 - This program is educational; use Valgrind (on Linux) for real leak detection.
-
-## Memory Management Algorithm
-
-```mermaid
-flowchart TD
-    A([Start]) --> B[Initialize tracker]
-    B --> C{Operation?}
-    C -->|Allocate| D[Call malloc]
-    D --> E[Add to list]
-    C -->|Free| F[Find block]
-    F --> G[Call free]
-    G --> H[Remove from list]
-    C -->|Check| I[/Print unfreed blocks/]
-    H --> C
-    E --> C
-    I --> C
-    C -->|Exit| J([End])
-    
-    TryAlloc --> Success{Successful?}
-    Success -->|Yes| Record["block = new Block
-    block.addr = ptr
-    block.size = size
-    block.time = now()"]
-    
-    Record --> UpdateStats["totalAlloc += size
-    blockCount++"]
-    
-    Success -->|No| Error1[/Error: out of memory/]
-    
-    Menu -->|2. Free| GetPtr[/Input pointer/]
-    GetPtr --> FindBlock["block = find in list"]
-    
-    FindBlock --> Found{Found?}
-    Found -->|Yes| Free["free(block.addr)
-    totalAlloc -= block.size
-    blockCount--"]
-    
-    Found -->|No| Error2[/Error: invalid pointer/]
-    
-    Menu -->|3. Check| CheckLeak["For each block:
-    - Print address
-    - Print size
-    - Print time"]
-    
-    CheckLeak --> Stats[/"Totals:
-    - Block count: blockCount
-    - Memory: totalAlloc"/]
-    
-    Menu -->|4| Exit([End])
-```
-
-Algorithm explanation:
-1. Allocation:
-   - malloc() + check success
-   - Create new block record
-   - Update statistics
-2. Deallocation:
-   - Find block in list
-   - free() if found
-   - Update statistics
-3. Leak checking:
-   - List all unfreed blocks
-   - Show total statistics
-        CreateTracker --> InitList[Initialize blocks list]
-    end
-
-    subgraph "Allocation Management"
-        Alloc([Allocate]) --> CallMalloc[Call malloc()]
-        CallMalloc --> CreateRecord[Create new record]
-        CreateRecord --> FillInfo[Store size, address, time]
-        FillInfo --> AddToList[Add to blocks list]
-    end
-
-    subgraph "Deallocation"
-        Free([Free]) --> FindBlock[Find block in list]
-        FindBlock --> ValidPtr{Valid pointer?}
-        ValidPtr -->|Yes| CallFree[Call free()]
-        ValidPtr -->|No| Error[Report error]
-        CallFree --> RemoveRecord[Remove from list]
-    end
-
-    subgraph "Leak Detection"
-        Check([Check]) --> ScanList[Scan blocks list]
-        ScanList --> FilterOld[Filter old blocks]
-        FilterOld --> ReportLeaks[Report leaks]
-    end
-```
+- Focus on understanding memory lifecycle and common issues.

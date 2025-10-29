@@ -20,19 +20,59 @@ Usage
 
 Provide number of players and step size; program prints elimination order and winner.
 
-## Code flow (Mermaid flowchart)
+## Core Algorithm (Mermaid flowchart)
 
 ```mermaid
 flowchart TD
-  Start([Start]) --> Read[Read n (players), k (step)]
-  Read --> Create[Create circular list of players]
-  Create --> Loop[Loop until one remains]
-  Loop --> Move[Move k-1 steps]
-  Move --> Remove[Remove current player]
-  Remove --> Loop
-  Loop --> Winner[Print winner]
-  Winner --> End([End])
+    Begin([Begin]) --> Init
+
+    subgraph "Core Josephus Algorithm"
+        Init["Initialize:
+        n players in circle
+        k step size"]
+        
+        subgraph "Circular Structure"
+            direction LR
+            Create["Create circular
+            linked list 1..n"] 
+            Link["Link each node
+            to next player"]
+        end
+        
+        subgraph "Elimination Logic"
+            Process["For each round:
+            1. Count k steps
+            2. Remove player
+            3. Update circle"]
+            
+            Check{Remaining
+            players > 1?}
+            
+            Process --> Check
+            Check -->|Yes| Process
+            Check -->|No| Winner["Last player
+            is winner"]
+        end
+    end
+
+    Init --> Create
+    Create --> Link
+    Link --> Process
+    Winner --> End([End])
 ```
+
+Algorithm explanation:
+1. Initialization:
+   - Create circular linked list
+   - Each node: player number & next pointer
+2. Game Logic:
+   - Count k steps to find target
+   - Remove player & update links
+   - Track elimination order
+3. Optimization:
+   - Use circular list for efficiency
+   - Single traversal per elimination
+   - O(n) space complexity
 
 Notes
 

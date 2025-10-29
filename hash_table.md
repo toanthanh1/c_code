@@ -22,21 +22,48 @@ Usage
 
 Run and use menu-driven operations to test the hash table.
 
-## Code flow (Mermaid flowchart)
+## Core Algorithm (Mermaid flowchart)
 
 ```mermaid
 flowchart TD
-  Start([Start]) --> Init[Init table (array of buckets)]
-  Init --> Menu[Show menu / Read choice]
-  Menu -->|Insert| Insert[Compute hash -> place in bucket]
-  Menu -->|Search| Search[Compute hash -> search chain/probe]
-  Menu -->|Delete| Delete[Locate and remove]
-  Insert --> Menu
-  Search --> Menu
-  Delete --> Menu
-  Menu --> Exit[Exit]
-  Exit --> End([End])
+    Begin([Begin]) --> ComputeHash
+
+    subgraph "Core Hash Table Operations"
+        ComputeHash["Calculate Hash Index
+        index = hash(key) % table_size"]
+        
+        subgraph "Collision Resolution"
+            direction LR
+            Collision{Collision?} -->|Yes| Strategy{"Choose Strategy"}
+            Strategy -->|Method 1| Chaining["Chaining:
+            Add to Linked List"]
+            Strategy -->|Method 2| Probing["Linear Probing:
+            Find Next Empty Slot"]
+        end
+    end
+
+    ComputeHash --> Collision
+    Collision -->|No| Key[/"Store/Find at
+    computed index"/]
+    
+    Chaining --> |Update| Key
+    Probing --> |Update| Key
+    
+    Key --> End([End])
 ```
+
+Algorithm explanation:
+1. Hash Function:
+   - Map key to table index
+   - Handle negative keys
+   - Ensure uniform distribution
+2. Collision Resolution:
+   - Chaining: Each slot has linked list
+   - Linear Probing: Try next slots
+3. Operations:
+   - Insert: Handle collisions appropriately
+   - Search: Follow chain or probe sequence
+   - Delete: Special handling for probing scheme
 
 Notes
 

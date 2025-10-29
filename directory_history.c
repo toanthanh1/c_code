@@ -379,7 +379,7 @@ int main() {
     int choice, index, count;
     char path[256], dirName[100], searchTerm[100];
     
-    printf("📁 Welcome to Directory History Navigator! 📁\n");
+    printf(" Welcome to Directory History Navigator!\n");
     printf("Keep track of your directory visits and navigate easily!\n\n");
     
     // Add some sample directories

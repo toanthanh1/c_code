@@ -22,83 +22,66 @@ Usage
 
 Run the program and use the interactive menu to push/pop calls, add variables, simulate recursion, and observe stack behavior.
 
-## Code flow (Mermaid flowchart)
+## Core Algorithm (Mermaid flowchart)
 
 ```mermaid
 flowchart TD
-  Start([Start]) --> Init[Create empty FunctionCallStack]
-  Init --> Menu[Show menu / Read choice]
-  Menu -->|Push| Push[Create StackFrame / Add params & locals]
-  Menu -->|Pop| Pop[Remove top frame / Free variables]
-  Menu -->|Simulate factorial| Simulate[Push frames recursively / Display]
-  Push --> Menu
-  Pop --> Menu
-  Simulate --> Menu
-  Menu --> Exit[Exit / Free stack]
-  Exit --> End([End])
-```
+    Begin([Begin]) --> Init
 
-Notes
-
-- This program is educational; it simulates stack frames in C structures rather than the CPU call stack.
-
-## Function Call Stack Algorithm
-
-```mermaid
-flowchart TD
-    A([Start]) --> B[Empty Stack]
-    B --> C{Operation?}
-    C -->|Function Call| D[Create New Frame]
-    D --> E[Push to Stack]
-    C -->|Return| F{Stack Empty?}
-    F -->|Yes| G[/Error/]
-    F -->|No| H[Pop Frame]
-    H --> I[Get Return Address]
-    E --> C
-    I --> C
-    G --> K([End])
-    C -->|Exit| K
-    
-    subgraph "Local Variable Management"
-        Menu -->|3| AddVar[/Input variable name,\ndata type/]
-        AddVar --> FindFrame["frame = stack.top"]
-        FindFrame --> AllocVar["var = malloc(Var)
-        var.name = name
-        var.type = type"]
-        AllocVar --> LinkVar["var.next = frame.vars
-        frame.vars = var"]
+    subgraph "Core Stack Operations"
+        Init["Initialize Empty Stack
+        base = NULL, top = NULL"]
+        
+        subgraph "Frame Structure"
+            direction LR
+            Frame["Stack Frame:
+            - Function name
+            - Parameters
+            - Local variables
+            - Return address"]
+            
+            Links["Frame Links:
+            - Previous frame
+            - Next frame"]
+        end
+        
+        subgraph "Stack Operations"
+            Push["Push Frame:
+            1. Create new frame
+            2. Link to current top
+            3. Update top pointer"]
+            
+            Pop["Pop Frame:
+            1. Save return value
+            2. Update top pointer
+            3. Free frame memory"]
+            
+            Scope["Variable Scope:
+            Search frames
+            bottom-up"]
+        end
     end
-    
-    Menu -->|4| Exit([End])
+
+    Init --> Frame
+    Frame --> Links
+    Links --> Push
+    Push --> Pop
+    Pop --> Scope
+    Scope --> End([End])
 ```
 
 Algorithm explanation:
 1. Stack Frame Management:
-   - Push: Create new frame → link to stack top
-   - Pop: Get top frame → save return address → free
-2. Local Variables:
-   - Add to current frame using linked list
-   - Automatically freed when frame is popped
-3. Tracking:
-   - Current frame count
-   - Return address for each frame
-   - Local variables per frame
-        AllocFrame --> SetInfo[Set function name, ID, return address]
-        SetInfo --> LinkFrame[Link frame to stack top]
-        LinkFrame --> UpdateStack[Increment frame count & execution level]
-    end
-    
-    subgraph "Pop Function Call"
-        Pop([Return]) --> GetTop[Get top frame]
-        GetTop --> SaveRet[Save return value/address]
-        SaveRet --> UnlinkFrame[Unlink from stack]
-        UnlinkFrame --> CleanVars[Free local variables]
-        CleanVars --> DecLevel[Decrement execution level]
-    end
-    
-    subgraph "Variable Management"
-        AddVar([Add variable]) --> AllocVar[Allocate memory for variable]
-        AllocVar --> FindScope[Find current frame]
-        FindScope --> LinkVar[Link to frame's variable list]
-    end
-```
+   - Push: Create frame with function info & parameters
+   - Pop: Save return value, free variables, update links
+   - Maintains proper call hierarchy
+2. Variable Scope:
+   - Variables belong to specific frames
+   - Search follows scope rules (bottom-up)
+3. Frame Structure:
+   - Each frame contains function context
+   - Linked list implementation for stack
+
+Notes
+
+- This program is educational; it simulates stack frames in C structures rather than the CPU call stack.
